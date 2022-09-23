@@ -1,1 +1,1 @@
-# CASE-STUDY-Smart-Device-Fitness-Data
+# CASE STUDY: Smart Device Fitness Data
