@@ -1,0 +1,131 @@
+---
+title: 'CASE STUDY: Smart Device Fitness Data'
+author: "Matt Hardy"
+date: "2022-09-28"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r Loading Packages}
+library(tidyverse)
+library(dplyr)
+library(gridExtra)
+```
+
+
+```{r Number of Participants}
+#activity <- read.csv("analysis.csv")
+n_distinct(activity$id)
+```
+
+```{r Summary Statistics}
+
+activity %>% 
+  select(totalsteps, totaldistance, sedentaryminutes, veryactiveminutes, fairlyactiveminutes, lightlyactiveminutes, calories, totalsleeprecords, totalminutesasleep, totaltimeinbed) %>% 
+  summary()
+```
+
+```{r Calories Burned vs. Minutes Asleep, echo=FALSE}
+ggplot(data=activity, aes(x=totalminutesasleep, y=calories)) +
+  geom_point() + stat_smooth(method=lm) + labs(title="Total Calories Burned vs. Minutes Asleep")
+```
+
+```{r Sedentary Minutes vs. Minutes Asleep, echo=FALSE}
+ggplot(data=activity, aes(x=totalminutesasleep, y=sedentaryminutes)) +
+  geom_point() + geom_smooth() + labs(title="Sedentary Minutes vs. Minutes Asleep")
+
+
+```
+```{r Checking for Outliers in Sleep Data}
+library(MASS)
+boxplot(activity$totalminutesasleep, main = "Total Minutes Asleep", ylab = "Minutes Asleep")
+```
+```{r Checking for outliers in Active Minutes Data}
+boxplot(activity$sedentaryminutes, main = "Total Sedentary Minutes", ylab = "Minutes")
+```
+
+```{r Identifying and Removing Outliers}
+iqr <- IQR(activity$totalminutesasleep)
+Q <-quantile(activity$totalminutesasleep, probs=c(.25, .75), na.rm = FALSE)
+upper <- Q[2]+1.5*iqr
+lower <- Q[1]-1.5*iqr
+cleaned_sleep_minutes <- subset(activity, activity$totalminutesasleep > lower & activity$totalminutesasleep < upper)
+iqr2 <- IQR(cleaned_sleep_minutes$sedentaryminutes)
+Q2 <- quantile(cleaned_sleep_minutes$sedentaryminutes, probs=c(.25, .75), na.rm = FALSE)
+upper2 <- Q2[2]+1.5*iqr2
+lower2 <- Q2[1]-1.5*iqr2
+cleaned_sedsleep_minutes <- subset(cleaned_sleep_minutes, cleaned_sleep_minutes$sedentaryminutes > lower2 & cleaned_sleep_minutes$sedentaryminutes < upper2)
+```
+
+```{r Re-plot Sedentary Minutes vs. Minutes Asleep (Outliers Omitted)}
+sed_plot <- ggplot(data=cleaned_sedsleep_minutes, aes(x=totalminutesasleep, y=sedentaryminutes)) +
+  geom_point() + stat_smooth(method=lm) + labs(title = "Sedentary Minutes vs. Minutes Asleep")
+sed_plot
+```
+
+
+```{r Lightly Active Minutes vs. Minutes Asleep (Outliers Omitted)}
+iqr3 <- IQR(cleaned_sedsleep_minutes$lightlyactiveminutes)
+Q3 <- quantile(cleaned_sedsleep_minutes$lightlyactiveminutes, probs=c(.25, .75), na.rm = FALSE)
+upper3 <- Q3[2]+1.5*iqr3
+lower3 <- Q3[1]-1.5*iqr3
+cleaned_sedsleep_minutes2 <- subset(cleaned_sedsleep_minutes, cleaned_sedsleep_minutes$lightlyactiveminutes > lower3 & cleaned_sedsleep_minutes$lightlyactiveminutes < upper3)
+lightly_plot <- ggplot(data=cleaned_sedsleep_minutes2, aes(x=totalminutesasleep, y=lightlyactiveminutes)) +
+  geom_point() + stat_smooth(method=lm) + labs(title = "Lightly Active Minutes vs. Minutes Asleep")
+lightly_plot
+```
+```{r Fairly Active Minutes vs. Minutes Asleep (Outliers Omitted)}
+iqr4 <- IQR(cleaned_sedsleep_minutes2$fairlyactiveminutes)
+Q4 <- quantile(cleaned_sedsleep_minutes2$fairlyactiveminutes, probs=c(.25, .75), na.rm = FALSE)
+upper4 <- Q4[2]+1.5*iqr4
+lower4 <- Q4[1]-1.5*iqr4
+cleaned_sedsleep_minutes3 <- subset(cleaned_sedsleep_minutes2, cleaned_sedsleep_minutes2$fairlyactiveminutes > lower4 & cleaned_sedsleep_minutes2$fairlyactiveminutes < upper4)
+fairly_plot <- ggplot(data=cleaned_sedsleep_minutes3, aes(x=totalminutesasleep, y=fairlyactiveminutes)) +
+  geom_point() + stat_smooth(method=lm) + labs(title = "Fairly Active Minutes vs. Minutes Asleep")
+fairly_plot
+```
+```{r Very Active Minutes vs. Minutes Asleep (Outliers Omitted)}
+iqr5 <- IQR(cleaned_sedsleep_minutes3$veryactiveminutes)
+Q5 <- quantile(cleaned_sedsleep_minutes3$veryactiveminutes, probs=c(.25, .75), na.rm = FALSE)
+upper5 <- Q5[2]+1.5*iqr5
+lower5 <- Q5[1]-1.5*iqr5
+cleaned_sedsleep_minutes4 <- subset(cleaned_sedsleep_minutes3, cleaned_sedsleep_minutes3$veryactiveminutes > lower5 & cleaned_sedsleep_minutes3$fairlyactiveminutes < upper5)
+very_plot <- ggplot(data=cleaned_sedsleep_minutes4, aes(x=totalminutesasleep, y=veryactiveminutes)) +
+  geom_point() + stat_smooth(method=lm) + labs(title = "Very Active Minutes vs. Minutes Asleep")
+very_plot
+```
+
+```{r Trend Comparison Lattice}
+grid.arrange(sed_plot, lightly_plot, fairly_plot, very_plot, nrow = 2)
+```
+
+
+```{r Activity Minutes by Type, echo=FALSE}
+total_minutes <- (sum(cleaned_sedsleep_minutes$sedentaryminutes) + sum(cleaned_sedsleep_minutes$lightlyactiveminutes) + sum(cleaned_sedsleep_minutes$fairlyactiveminutes) + sum(cleaned_sedsleep_minutes$veryactiveminutes))
+sedentary_percentage <- round((sum(cleaned_sedsleep_minutes$sedentaryminutes) / total_minutes) * 100, digits = 2)
+lightly_percentage <- round((sum(cleaned_sedsleep_minutes$lightlyactiveminutes) / total_minutes) * 100, digits = 2)
+fairly_percentage <- round((sum(cleaned_sedsleep_minutes$fairlyactiveminutes) / total_minutes) * 100, digits = 2)
+very_percentage <- round((sum(cleaned_sedsleep_minutes$veryactiveminutes) / total_minutes) * 100, digits = 2)
+percentages <- data.frame(level=c("Sedentary", "Lightly", "Fairly", "Very Active"), minutes = c(sedentary_percentage, lightly_percentage, fairly_percentage, very_percentage))
+labels = c(sedentary_percentage, lightly_percentage, fairly_percentage, very_percentage)
+ggplot(percentages, aes(x="", y=minutes, fill=level)) + geom_bar(stat="identity", width=1, color="white") + coord_polar("y", start=0) + theme_void() + labs(title="Percentage of Active Minutes")
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
