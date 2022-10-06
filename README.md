@@ -129,5 +129,22 @@ As you can see in the screenshot above, not every data feature produced meaningf
 
 ![chart_lattice.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/chart_lattice.png)
 
-When looking at the various levels of activity intensities, compared to the number of minutes of sleep the users enjoyed on those particular recording dates, the only factor that stood out was the number of minutes spent in a sedentary state.
+When looking at the various levels of activity intensities, compared to the number of minutes of sleep the users enjoyed on those particular recording dates, the only factor that stood out was the number of minutes spent in a sedentary state.  When comparing these two metrics, a fairly significant negative correlation appears.  **This data suggests that the level of intensive activity isn't so much the driving factor behind getting more sleep, but rather the reduction of sedentary (screen) time**.
+
+Narrowing in on this factor, I decided to visualize what percentage of the users' average recorded activity was spent in a sedentary state.  The pie chart below, representing the average time spent in various levels of activity, was generated with the following R script (using data from the previous dataframes with outliers omitted):
+```{r Activity Minutes by Type, echo=FALSE}
+total_minutes <- (sum(cleaned_sedsleep_minutes$sedentaryminutes) + sum(cleaned_sedsleep_minutes$lightlyactiveminutes) + sum(cleaned_sedsleep_minutes$fairlyactiveminutes) + sum(cleaned_sedsleep_minutes$veryactiveminutes))
+sedentary_percentage <- round((sum(cleaned_sedsleep_minutes$sedentaryminutes) / total_minutes) * 100, digits = 2)
+lightly_percentage <- round((sum(cleaned_sedsleep_minutes$lightlyactiveminutes) / total_minutes) * 100, digits = 2)
+fairly_percentage <- round((sum(cleaned_sedsleep_minutes$fairlyactiveminutes) / total_minutes) * 100, digits = 2)
+very_percentage <- round((sum(cleaned_sedsleep_minutes$veryactiveminutes) / total_minutes) * 100, digits = 2)
+percentages <- data.frame(level=c("Sedentary", "Lightly", "Fairly", "Very Active"), minutes = c(sedentary_percentage, lightly_percentage, fairly_percentage, very_percentage))
+labels = c(sedentary_percentage, lightly_percentage, fairly_percentage, very_percentage)
+ggplot(percentages, aes(x="", y=minutes, fill=level)) + geom_bar(stat="identity", width=1, color="white") + coord_polar("y", start=0) + theme_void() + labs(title="Percentage of Active Minutes")
+```
+![percentage_of_activity_minutes.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/percentage_of_activity_minutes.png)
+
+(An interactive version of the chart, with more granular labeling, can be found below in the related Tableau Story)
+
+As you can immediately see, 
 
