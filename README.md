@@ -26,13 +26,13 @@ Our process for analyzing the data was as follows:
 
 ## Resources
 
-- Data: FitBit Fitness Tracker Data(https://www.kaggle.com/datasets/arashnic/fitbit)
+- Data: [FitBit Fitness Tracker Data](https://www.kaggle.com/datasets/arashnic/fitbit)
 - Software/Languages: Python 3.9.12 (Pandas Library), PostgreSQL 14, pgAdmin 4 v6.1, R w/ RStudio 2022.07.1 Build 554, Tableau Desktop 2022.2.1
 
 
 ## ETL Process and Database Design
 
-Our dataset contains 15 CSV files, obtained from https://www.kaggle.com/datasets/arashnic/fitbit.  The data, which was automatically collected by FitBit devices and voluntarily submitted for aggregation, should be considered fairly reliable due to the automated nature of its sensory collection.
+Our dataset contains 15 CSV files, obtained from [Kaggle](https://www.kaggle.com/datasets/arashnic/fitbit).  The data, which was automatically collected by FitBit devices and voluntarily submitted for aggregation, should be considered fairly reliable due to the automated nature of its sensory collection.
 
 
 That being said, the data has certain limitations:
@@ -45,17 +45,17 @@ That being said, the data has certain limitations:
 
 - Upon inspection, many of the CSV files used non-uniform date-time formats, which would prove problematic when trying to import the files into a SQL database.  To correct this, I decided to use the Pandas library in Python to perform our initial data cleaning.  Here is an example of the script that was ran on each file:
 
-(data cleaning screenshot)
+![data_cleaning.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/data_cleaning.png)
 
 - Looking through our various files, I saw that the only completely shared data that could be used to build a relational database (apart from the timestamps) were the unique user IDs, but none of the files contained those IDs as unique values (which could be used as Primary Keys within the SQL database).  For this purpose, I created a seperate file with only unique User IDS that I could use as a master key to unify the data files.
 
-- I created a local PostgreSQL database to house the data with the following schema:
+- I created a local PostgreSQL database to house the data with the following [schema](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/schema.sql):
 
-(schema screenshot)
+![schema_small.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/schema_small.png)
 
 - Once all files had been successfully imported to the SQL database, I started joining tables with similar time measurements with SQL queries:
 
-(query join screenshot)
+![sql_query.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/sql_query.png)
 
 
 ### Analyzing the Data in R
@@ -72,23 +72,23 @@ library(ggpmisc)
 
 After checking for null values in the newly joined/exported CSV File, I imported the file into RStudio and double-checked the number of unique user IDs that were left after the SQL inner join.  24 confirmed unique IDs remained.
 
-(distinct user ids screenshot)
+![distinct_ids.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/distinct_ids.png)
 
 To obtain a broad-scale look at the range of the combined dataset, I generated summary statistics for each of the dataset's features:
 
-(summary statistics screenshot)
+![summary_statistics.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/summary_statistics.png)
 
 
 ### Incorrect Assumptions and Ambiguous Trendlines
 
 The first plot I generated with R turned out to be based on a mistaken assumption: That there would be a correlation between the number of calories burned in the day and the amount of sleep the user enjoyed at night.  As you can see in the scatterplot below, that assumption turned out to be wholly incorrect.
 
-(calories burned screenshot)
+![calories_vs_sleep_minutes.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/calories_vs_sleep_minutes.png)
 
 The second plot sought to find a correlation between the amount of sedentary minutes of each day (the time spent by users sitting and doing nothing the physically exert themselves, presumably in front of a screen) and the amount of sleep they achieved.  While the chart suggested that there could be a relationship between the two features, the plot's trendline appeared somewhat ambiguous.  
 
 
-(sedentary minutes plot curved trendline)
+![sedentary_minutes_vs_sleep_original.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/sedentary_minutes_vs_sleep_original.png)
 
 Inspecting the points in the scatter plot, there appeared to be a number of extreme outlier values.
 
@@ -98,9 +98,9 @@ Since it appeared that there could possibly be a relationship between the users'
 
 The first step was creating boxplots to verify that there were actually outliers in the data:
 
-(sleep boxplot screenshot)
+![sleep_boxplot.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/sleep_boxplot.png)
 
-(sedentary boxplot screenshot)
+![sed_boxplot.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/sed_boxplot.png)
 
 The plots confirmed quite a few outlier datapoints, which would throw off our trendline analysis.  Using the Q1/3 +- 1.5 * IQR (Inter-Quartile Range) formula to define the bounds of the data to be included in the plot, I wrote the following code to remove outliers and subsequently generate a cleaned version of the scatterplot:
 
@@ -119,15 +119,15 @@ cleaned_sedsleep_minutes <- subset(cleaned_sleep_minutes, cleaned_sleep_minutes$
 
 ## Analyzing Cleaned Data
 
-(sedentary vs sleep cleaned screenshot)
+![sedentary_minutes_vs_sleep_cleaned.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/sedentary_minutes_vs_sleep_cleaned.png)
 
 Since the dataset included features for several levels of activity intensity (Lightly Active, Fairly Active, and Very Active), I performed the same cleaning process on those datapoints and generated comparable plots.
 
-(lightly active cleaned screenshot)
+![light_activity_cleaned.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/light_activity_cleaned.png)
 
 As you can see in the screenshot above, not every data feature produced meaningful correlation.  For comparison, I produced a chart lattice to compare the four data visualizations:
 
-(Chart lattice screenshot)
+![chart_lattice.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/chart_lattice.png)
 
 When looking at the various levels of activity intensities, compared to the number of minutes of sleep the users enjoyed on those particular recording dates, the only factor that stood out was the number of minutes spent in a sedentary state.
 
