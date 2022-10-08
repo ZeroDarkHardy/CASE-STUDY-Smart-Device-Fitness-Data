@@ -13,7 +13,8 @@ Sleepr is a manufacturer of wellness-related smart appliances, with the "DreamSm
 ---
 ## Overview of Project
 
-Using proxied data from 33 Fitbit users who voluntarily uploaded their usage and wellness data, we will attempt to find correlations between various levels of physical activity and the amount of restful sleep those users enjoyed.
+Using proxied data from 33 Fitbit users who voluntarily uploaded their usage and wellness data, we will attempt to find correlations between various levels of physical activity and the amount of restful sleep those users enjoyed.  We will then translate any correlations found into marketing insights for the client.
+
 
 Our process for analyzing the data was as follows:
 
@@ -32,14 +33,14 @@ Our process for analyzing the data was as follows:
 
 ## ETL Process and Database Design
 
-Our dataset contains 15 CSV files, obtained from [Kaggle](https://www.kaggle.com/datasets/arashnic/fitbit).  The data, which was automatically collected by FitBit devices and voluntarily submitted for aggregation, should be considered fairly reliable due to the automated nature of its sensory collection.
+Our dataset contains 15 CSV files, obtained from [Kaggle](https://www.kaggle.com/datasets/arashnic/fitbit).  The data, which was automatically collected by FitBit devices and voluntarily submitted for aggregation, should be considered fairly reliable due to the automated nature of its sensory collection.  
 
 
 That being said, the data has certain limitations:
 
-- Though there are 33 unique user ids in the data, only 24 of them wore their wellness trackers during the night, which means we can only use data from those users to track sleep patterns and correlations to other collected data.  We won't be able to rely on a standard T test to measure statistical signifance of our datapoints, since we don't have enough data to exceed the central limit theorum threshold.
+- Though there are 33 unique user ids in the data, only 24 of them wore their wellness trackers during the night, which means we can only use data from those users to track sleep patterns and correlations to other collected data.  We won't be able to rely on a standard T test to measure statistical signifance of our datapoints, since we don't have enough data to exceed the central limit theorum threshold.  We can analyze the data to assess general trends, but ideally it would be better to have much more data.
 
-- One file, which contained data relating to the users' weight, contained only 8 unique IDs, and much of the data in that file was manually entered rather than being collected by the sensors in their FitBit devices.  For these reasons, that file cannot be considered reliable and its data was omitted entirely from our analysis.
+- One file, which contained data relating to the users' weight, contained only 8 unique IDs, and much of the data in that file was manually entered rather than being collected by the sensors in their FitBit devices.  For these reasons, that file cannot be considered reliable and its data was ultimately omitted from our analysis.
 
 ### Data Cleaning
 
@@ -75,6 +76,12 @@ After checking for null values in the newly joined/exported CSV File, I imported
 ![distinct_ids.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/distinct_ids.png)
 
 To obtain a broad-scale look at the range of the combined dataset, I generated summary statistics for each of the dataset's features:
+
+```{r Summary Statistics}
+activity %>% 
+  select(totalsteps, totaldistance, sedentaryminutes, veryactiveminutes, fairlyactiveminutes, lightlyactiveminutes, calories, totalsleeprecords, totalminutesasleep, totaltimeinbed) %>% 
+  summary()
+```
 
 ![summary_statistics.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/summary_statistics.png)
 
@@ -119,6 +126,13 @@ cleaned_sedsleep_minutes <- subset(cleaned_sleep_minutes, cleaned_sleep_minutes$
 
 ## Analyzing Cleaned Data
 
+```{r Re-plot Sedentary Minutes vs. Minutes Asleep (Outliers Omitted)}
+sed_plot <- ggplot(data=cleaned_sedsleep_minutes, aes(x=totalminutesasleep, y=sedentaryminutes)) +
+  stat_poly_eq(label.x = "right", label.y = "top") +
+  geom_point() + stat_smooth(method=lm) + labs(title = "Sedentary Minutes vs. Minutes Asleep") + 
+  theme(plot.title = element_text(size=10))
+sed_plot
+```
 ![sedentary_minutes_vs_sleep_cleaned.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/sedentary_minutes_vs_sleep_cleaned.png)
 
 Since the dataset included features for several levels of activity intensity (Lightly Active, Fairly Active, and Very Active), I performed the same cleaning process on those datapoints and generated comparable plots.
@@ -130,6 +144,8 @@ As you can see in the screenshot above, not every data feature produced meaningf
 ![chart_lattice.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/chart_lattice.png)
 
 When looking at the various levels of activity intensities, compared to the number of minutes of sleep the users enjoyed on those particular recording dates, the only factor that stood out was the number of minutes spent in a sedentary state.  When comparing these two metrics, a fairly significant negative correlation appears.  **This data suggests that the level of intensive activity isn't so much the driving factor behind getting more sleep, but rather the reduction of sedentary (screen) time**.
+
+### Most users are spending most of their time in a sedentary state
 
 Narrowing in on this factor, I decided to visualize what percentage of the users' average recorded activity was spent in a sedentary state.  The pie chart below, representing the average time spent in various levels of activity, was generated with the following R script (using data from the previous dataframes with outliers omitted):
 ```{r Activity Minutes by Type, echo=FALSE}
@@ -146,5 +162,4 @@ ggplot(percentages, aes(x="", y=minutes, fill=level)) + geom_bar(stat="identity"
 
 (An interactive version of the chart, with more granular labeling, can be found below in the related Tableau Story)
 
-As you can immediately see, 
-
+As you can immediately see, most of the users are spending the majority (73.13%) of their time in a sedentary state.
