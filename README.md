@@ -1,17 +1,25 @@
 # CASE STUDY: Smart Device Fitness Data
 ---
 
-(insert index here)
+[Project Overview](#project-overview)
+
+[Data Processing (ETL)](#etl-process-and-database-design)
+
+[Cleaning and Visualizing Data with R](#analyzing-the-data-in-r)
+
+[Analyzing Cleaned Data](#analyzing-cleaned-data)
+
+[Summary and Conclusions](#summary)
 
 
-
+![sleepr.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/Sleepr.png)
 
 ## Background
 
 Sleepr is a manufacturer of wellness-related smart appliances, with the "DreamSmrt" Smart Mattress as their flagship product.  Founded in 2014, Sleepr has secured a large marketshare position for sleep related smart devices, and has been considering branching out to other wellness related products.  One such product is a bracelet-style wellness tracker, similar to FitBit, and Sleepr is hoping an analysis of proxied market data might inform its future marketing campaigns.
 
 ---
-## Overview of Project
+## Project Overview
 
 Using proxied data from 33 Fitbit users who voluntarily uploaded their usage and wellness data, we will attempt to find correlations between various levels of physical activity and the amount of restful sleep those users enjoyed.  We will then translate any correlations found into marketing insights for the client.
 
@@ -25,11 +33,12 @@ Our process for analyzing the data was as follows:
 - Aggregate findings and visualizations into a Tableau story for presentation to stakeholders
 
 
-## Resources
+### Resources
 
 - Data: [FitBit Fitness Tracker Data](https://www.kaggle.com/datasets/arashnic/fitbit)
 - Software/Languages: Python 3.9.12 (Pandas Library), PostgreSQL 14, pgAdmin 4 v6.1, R w/ RStudio 2022.07.1 Build 554, Tableau Desktop 2022.2.1
 
+---
 
 ## ETL Process and Database Design
 
@@ -44,22 +53,25 @@ That being said, the data has certain limitations:
 
 - We don't have data on other important factors that may impact the users' sleep cycles.  A few of those factors might include age, chronic ailments or sleep disorders, and medications being taken by the users.
 
-## Data Cleaning
+---
 
-- Upon inspection, many of the CSV files used non-uniform date-time formats, which would prove problematic when trying to import the files into a SQL database.  To correct this, I decided to use the Pandas library in Python to perform our initial data cleaning.  Here is an example of the script that was ran on each file:
+### Data Cleaning
+
+Upon inspection, many of the CSV files used non-uniform date-time formats, which would prove problematic when trying to import the files into a SQL database.  To correct this, the Pandas library in Python was used to perform our initial data cleaning.  Here is an example of the script that was ran on each file:
 
 ![data_cleaning.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/data_cleaning.png)
 
-- Looking through our various files, I saw that the only completely shared data that could be used to build a relational database (apart from the timestamps) were the unique user IDs, but none of the files contained those IDs as unique values (which could be used as Primary Keys within the SQL database).  For this purpose, I created a seperate file with only unique User IDS that I could use as a master key to unify the data files.
+Looking through our various files, it seemed that the only completely shared data that could be used to build a relational database (apart from the timestamps) were the unique user IDs, but none of the files contained those IDs as unique values (which could be used as Primary Keys within the SQL database).  For this purpose, a seperate file with only unique User IDS was generated, to use as a master key to unify the data files.
 
-- I created a local PostgreSQL database to house the data with the following [schema](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/schema.sql):
+We created a local PostgreSQL database to house the data with the following [schema](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/schema.sql):
 
 ![schema_small.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/schema_small.png)
 
-- Once all files had been successfully imported to the SQL database, I started joining tables with similar time measurements with SQL queries:
+Once all files had been successfully imported to the SQL database, I started joining tables with similar time measurements with SQL queries:
 
 ![sql_query.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/sql_query.png)
 
+---
 
 ## Analyzing the Data in R
 
@@ -88,9 +100,9 @@ activity %>%
 ![summary_statistics.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/summary_statistics.png)
 
 
-### Incorrect Assumptions and Ambiguous Trendlines
+### Inspecting Unclean Data
 
-The first plot I generated with R turned out to be based on a mistaken assumption: That there would be a correlation between the number of calories burned in the day and the amount of sleep the user enjoyed at night.  As you can see in the scatterplot below, that assumption turned out to be wholly incorrect.
+The first plot generated with R turned out to be based on a mistaken assumption: That there would be a correlation between the number of calories burned in the day and the amount of sleep the user enjoyed at night.  As you can see in the scatterplot below, that assumption turned out to be wholly incorrect.
 
 ![calories_vs_sleep_minutes.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/calories_vs_sleep_minutes.png)
 
@@ -125,6 +137,8 @@ upper2 <- Q2[2]+1.5*iqr2
 lower2 <- Q2[1]-1.5*iqr2
 cleaned_sedsleep_minutes <- subset(cleaned_sleep_minutes, cleaned_sleep_minutes$sedentaryminutes > lower2 & cleaned_sleep_minutes$sedentaryminutes < upper2)
 ```
+
+---
 
 ## Analyzing Cleaned Data
 
@@ -182,6 +196,7 @@ The two bar charts, when compared, appear to reinforce the narrative that more s
 
 The heatmap shown above shows the average activity intensities among users, per hour of each week day (with darker colors representing hightened intensity levels).  There appear to be higher than average levels of activity on Wednesdays (after 5pm) and on Saturday afternoons.  We also see average activity levels staying much lower for longer periods on Saturday and Sunday mornings, suggesting that the users are sleeping in (or at least not rushing off to work).  This may also suggest that the hightened number of sleeping minutes we observed on Sundays may be in the morning, not the evening, and may correlate to reduced sedentary time on Saturdays. Though the heatmap shows higher-than-average levels of general activity on Tuesdays, our previous graphs show that Tuesdays account for some of the fewest number of sleeping minutes.  However, according to the heatmap, the users tend to stay up (and active) later on Tuesdays than they do on Saturdays, so the reduced hours of sleep may be deliberate.
 
+---
 
 ## SUMMARY
 
