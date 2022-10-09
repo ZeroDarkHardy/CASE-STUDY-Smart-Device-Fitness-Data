@@ -180,21 +180,31 @@ The two bar charts, when compared, appear to reinforce the narrative that more s
 
 ![avg_activity_by_weekday.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/avg_activity_by_weekday.png)
 
-The heatmap shown above shows the average activity intensities among users, per hour of each week day (with darker colors representing hightened intensity levels).  There appear to be higher than average levels of activity on Wednesdays (after 5pm) and on Saturday afternoons.  We also see average activity levels staying much lower for longer periods on Saturday and Sunday mornings, suggesting that the users are sleeping in (or at least not rushing off to work).  This may also suggest that the hightened number of sleeping minutes we observed on Sundays may be in the morning, not the evening, and may correlate to reduced sedentary time on Saturdays.
+The heatmap shown above shows the average activity intensities among users, per hour of each week day (with darker colors representing hightened intensity levels).  There appear to be higher than average levels of activity on Wednesdays (after 5pm) and on Saturday afternoons.  We also see average activity levels staying much lower for longer periods on Saturday and Sunday mornings, suggesting that the users are sleeping in (or at least not rushing off to work).  This may also suggest that the hightened number of sleeping minutes we observed on Sundays may be in the morning, not the evening, and may correlate to reduced sedentary time on Saturdays. Though the heatmap shows higher-than-average levels of general activity on Tuesdays, our previous graphs show that Tuesdays account for some of the fewest number of sleeping minutes.  However, according to the heatmap, the users tend to stay up (and active) later on Tuesdays than they do on Saturdays, so the reduced hours of sleep may be deliberate.
 
 
 ## SUMMARY
 
 View the interactive Tableau story here: (tableau link)
 
+![dashboard.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/dashboard.png)
+
 ### Conclusions based on our analysis:
 
 - The majority of the users' recorded time was spent in a sedentary state (73.13%, with outliers omitted).  The majority of those sedentary minutes take place during standard work hours from Monday through Friday of each week.
 - On days when we observe higher than average amounts of time spent in hightened states of physical activity, we tend to observe more minutes of sleep that evening and the following morning.
-- While some minor correlations are observed between the levels of physical activity and the amount of sleep minutes, the strongest (negative) correlation is found in the number of sedentary minutes.  This implies that its less important that the users achieve a high intensity of physical activity, and more important that they simply remain sedentary for less time.  This begs a question for future analysis (with more data): Is the act of being sedentary the driving factor hindering sleep, or is a specific ***sedentary*** activity causing it (for example, time staring at a screen with a harsh lighting profile).
+- While some minor correlations are observed between the levels of physical activity and the amount of sleep minutes, the strongest (negative) correlation is found in the number of sedentary minutes.  This implies that its less important that the users achieve a high intensity of physical activity, and more important that they simply remain sedentary for less time.  This begs a question for future analysis (with more data): Is the act of being sedentary the driving factor hindering sleep, or is a specific ***sedentary*** activity causing it (for example, time staring at a screen with a harsh lighting profile).  There appears to be no correlation of any kind between the number of calories a user burns in a day vs the amount of sleep they get.
 
 ### Marketing recommendations to client:
 
-- Since noticeable correlation exists between sedentary time and sleep time, Sleepr's new wellness tracker should heavily emphasize a sedentary (or "screen") timer.  The purpose of this timer would be to not only encourage the users to get up and stretch from time to time, but also to make them aware when they're approaching the maximum daily sedentary time before it starts impacting a healthy sleep cycle.  This threshold may vary from user to user, but our graphs seem to suggest that exceeding a maximum of 8 to 10 hours a day of "screen" time will adversely affect the respective user's sleep.
+- Since noticeable correlation exists between sedentary time and sleep time, Sleepr's new wellness tracker should heavily emphasize a sedentary (or "screen") timer.  The purpose of this timer would be to not only encourage the users to get up and stretch from time to time, but also to make them aware when they're approaching the maximum daily sedentary time before it starts impacting a healthy sleep cycle.  This threshold may vary from user to user, but our graphs seem to suggest that exceeding a maximum of 8 to 10 hours a day of "screen" time will adversely affect the respective user's sleep.  
 
 - The majority of the proxied data shows that users spend most of their time in sedentary states, meaning its not necessarily fitness fanatics who are buying wellness trackers.  Many of these users may already be using the product to quantify how their habits are effecting their general wellness, but not all of them are wearing their trackers to bed (perhaps because its not comfortable, or they just need to charge the tracker).  Sleepr could emphasize the integration of wellness tracking sensors between their proposed bracelet trackers and their smart-beds, offering their users 24 hour sensory tracking for more complete analytics.
+
+- Marketing opportunities may exist for other products.  If the majority of sedentary time is spent during the workday (presumably in front of a computer), Sleepr could market "standing desks" to users of its wellness tracker.
+
+
+### Opportunities for future analysis:
+
+- As mentioned earlier, our dataset was fairly limited, not only by the number of unique datapoints but also the table features.  We don't have any data regarding how the users are spending their time (while sedentary), their ages, diet, or any medical information that might affect the sleep they enjoy at night.  Integration of data like this to future analysis might help the client create more accurate and personalized wellness recommendations to the users.
+- More than anything else, a larger amount of user data is needed.  With more data, it would be possible to create a machine learning model to predict the amount of sleep a user can expect based on their recorded habits.
