@@ -42,7 +42,9 @@ That being said, the data has certain limitations:
 
 - One file, which contained data relating to the users' weight, contained only 8 unique IDs, and much of the data in that file was manually entered rather than being collected by the sensors in their FitBit devices.  For these reasons, that file cannot be considered reliable and its data was ultimately omitted from our analysis.
 
-### Data Cleaning
+- We don't have data on other important factors that may impact the users' sleep cycles.  A few of those factors might include age, chronic ailments or sleep disorders, and medications being taken by the users.
+
+## Data Cleaning
 
 - Upon inspection, many of the CSV files used non-uniform date-time formats, which would prove problematic when trying to import the files into a SQL database.  To correct this, I decided to use the Pandas library in Python to perform our initial data cleaning.  Here is an example of the script that was ran on each file:
 
@@ -59,7 +61,7 @@ That being said, the data has certain limitations:
 ![sql_query.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/sql_query.png)
 
 
-### Analyzing the Data in R
+## Analyzing the Data in R
 
 Before loading the dataset into R, the following R packages were installed/loaded:
 
@@ -99,7 +101,7 @@ The second plot sought to find a correlation between the amount of sedentary min
 
 Inspecting the points in the scatter plot, there appeared to be a number of extreme outlier values.
 
-## Identifying Outliers in the Data
+### Identifying Outliers in the Data
 
 Since it appeared that there could possibly be a relationship between the users' sedentary periods and the amount of sleep they got, I decided to remove extreme outliers in the data (possibly caused by the users removing their trackers without disabling them) and regenerate the plot.
 
@@ -139,13 +141,13 @@ Since the dataset included features for several levels of activity intensity (Li
 
 ![light_activity_cleaned.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/light_activity_cleaned.png)
 
-As you can see in the screenshot above, not every data feature produced meaningful correlation.  For comparison, I produced a chart lattice to compare the four data visualizations:
+As you can see in the screenshot above, not every data feature produced meaningful correlation.  In the plot above, we see that the correlation trend line is almost flat, telling us that there is no meaningful relation between the amount of users' light activity during the day and how much sleep they attain at night.  For comparison, I produced a chart lattice to compare the four data visualizations:
 
 ![chart_lattice.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/chart_lattice.png)
 
-When looking at the various levels of activity intensities, compared to the number of minutes of sleep the users enjoyed on those particular recording dates, the only factor that stood out was the number of minutes spent in a sedentary state.  When comparing these two metrics, a fairly significant negative correlation appears.  **This data suggests that the level of intensive activity isn't so much the driving factor behind getting more sleep, but rather the reduction of sedentary (screen) time**.
+When looking at the various levels of activity intensities, compared to the number of minutes of sleep the users enjoyed on those particular recording dates, the only factor that stood out was the number of minutes spent in a sedentary state.  A fairly significant negative correlation is visible between those two factors.  **This data suggests that the level of intensive activity isn't so much the driving factor behind getting more sleep, but rather the reduction of sedentary time**.  It's worth nothing that numerous "zero" values in the bottom two graphs are not null values, but simply represent days that specific users never exerted themselves past a "lightly active" level.
 
-### Most users are spending most of their time in a sedentary state
+### **Most users are spending most of their time in a sedentary state**
 
 Narrowing in on this factor, I decided to visualize what percentage of the users' average recorded activity was spent in a sedentary state.  The pie chart below, representing the average time spent in various levels of activity, was generated with the following R script (using data from the previous dataframes with outliers omitted):
 ```{r Activity Minutes by Type, echo=FALSE}
@@ -162,4 +164,37 @@ ggplot(percentages, aes(x="", y=minutes, fill=level)) + geom_bar(stat="identity"
 
 (An interactive version of the chart, with more granular labeling, can be found below in the related Tableau Story)
 
-As you can immediately see, most of the users are spending the majority (73.13%) of their time in a sedentary state.
+As you can immediately see, most of the users are spending the majority (73.13%) of their time in a sedentary state.  Most users spend at least a small amount of time per day in a "lightly active" state, but very few achieve "fairly" or "very active" states, or at least not for very long.
+
+### Strong negative correlation between sedentary minutes and sleep time
+
+Let's take a look at the days of the week that users are spending the most time (on average) in a sedentary state, and compare them to the average amount of sleep recorded on those nights.  The following charts were created in Tableau, and are accessible in the [Tableau Story] at the end of the analysis.
+
+![avg_sedentary_minutes_by_week_day.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/avg_sedentary_minutes_by_week_day.png)
+
+![avg_sleep_by_week_day.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/avg_sleep_by_week_day.png)
+
+The two bar charts, when compared, appear to reinforce the narrative that more sedentary time leads to less sleep.  On each day that we see an increased number of sedentary minutes, we see the number of minutes asleep fall.  We also see elevated periods of sedentary minutes from Monday to Friday of each week, suggesting that the majority of these sedentary minutes take place during the workday.
+
+### Average level of activity by hour of week day
+
+![avg_activity_by_weekday.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/avg_activity_by_weekday.png)
+
+The heatmap shown above shows the average activity intensities among users, per hour of each week day (with darker colors representing hightened intensity levels).  There appear to be higher than average levels of activity on Wednesdays (after 5pm) and on Saturday afternoons.  We also see average activity levels staying much lower for longer periods on Saturday and Sunday mornings, suggesting that the users are sleeping in (or at least not rushing off to work).  This may also suggest that the hightened number of sleeping minutes we observed on Sundays may be in the morning, not the evening, and may correlate to reduced sedentary time on Saturdays.
+
+
+## SUMMARY
+
+View the interactive Tableau story here: (tableau link)
+
+### Conclusions based on our analysis:
+
+- The majority of the users' recorded time was spent in a sedentary state (73.13%, with outliers omitted).  The majority of those sedentary minutes take place during standard work hours from Monday through Friday of each week.
+- On days when we observe higher than average amounts of time spent in hightened states of physical activity, we tend to observe more minutes of sleep that evening and the following morning.
+- While some minor correlations are observed between the levels of physical activity and the amount of sleep minutes, the strongest (negative) correlation is found in the number of sedentary minutes.  This implies that its less important that the users achieve a high intensity of physical activity, and more important that they simply remain sedentary for less time.  This begs a question for future analysis (with more data): Is the act of being sedentary the driving factor hindering sleep, or is a specific ***sedentary*** activity causing it (for example, time staring at a screen with a harsh lighting profile).
+
+### Marketing recommendations to client:
+
+- Since noticeable correlation exists between sedentary time and sleep time, Sleepr's new wellness tracker should heavily emphasize a sedentary (or "screen") timer.  The purpose of this timer would be to not only encourage the users to get up and stretch from time to time, but also to make them aware when they're approaching the maximum daily sedentary time before it starts impacting a healthy sleep cycle.  This threshold may vary from user to user, but our graphs seem to suggest that exceeding a maximum of 8 to 10 hours a day of "screen" time will adversely affect the respective user's sleep.
+
+- The majority of the proxied data shows that users spend most of their time in sedentary states, meaning its not necessarily fitness fanatics who are buying wellness trackers.  Many of these users may already be using the product to quantify how their habits are effecting their general wellness, but not all of them are wearing their trackers to bed (perhaps because its not comfortable, or they just need to charge the tracker).  Sleepr could emphasize the integration of wellness tracking sensors between their proposed bracelet trackers and their smart-beds, offering their users 24 hour sensory tracking for more complete analytics.
