@@ -200,7 +200,7 @@ The heatmap shown above shows the average activity intensities among users, per 
 
 ## SUMMARY
 
-View the interactive Tableau story here: (tableau link)
+[View the interactive Tableau story here](https://public.tableau.com/views/CASESTUDYSmartDeviceFitnessData/CASESTUDYSmartDeviceFitnessData?:language=en-US&publish=yes&:display_count=n&:origin=viz_share_link)
 
 ![dashboard.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/dashboard.png)
 
