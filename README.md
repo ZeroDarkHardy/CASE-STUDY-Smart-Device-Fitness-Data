@@ -14,7 +14,7 @@ Author: Matt Hardy, October 9 2022
 
 [Summary and Conclusions](#summary)
 
-[Tableau Presentation](https://public.tableau.com/shared/K99MQB95R?:display_count=n&:origin=viz_share_link)
+[Tableau Presentation](https://public.tableau.com/views/CASESTUDYSmartDeviceFitnessData/CASESTUDYSmartDeviceFitnessData?:language=en-US&publish=yes&:display_count=n&:origin=viz_share_link)
 
 
 ![sleepr.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/Sleepr.png)
@@ -211,7 +211,7 @@ The heatmap shown above shows the average activity intensities among users, per 
 
 ## SUMMARY
 
-[View the interactive Tableau story here](https://public.tableau.com/shared/K99MQB95R?:display_count=n&:origin=viz_share_link)
+[View the interactive Tableau story here](https://public.tableau.com/views/CASESTUDYSmartDeviceFitnessData/CASESTUDYSmartDeviceFitnessData?:language=en-US&publish=yes&:display_count=n&:origin=viz_share_link)
 
 ![dashboard.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/dashboard.png)
 
