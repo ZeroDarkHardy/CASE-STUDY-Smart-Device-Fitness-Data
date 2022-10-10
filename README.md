@@ -1,4 +1,7 @@
 # CASE STUDY: Smart Device Fitness Data
+
+Author: Matt Hardy, October 9 2022
+
 ---
 
 [Project Overview](#project-overview)
@@ -10,6 +13,8 @@
 [Analyzing Cleaned Data](#analyzing-cleaned-data)
 
 [Summary and Conclusions](#summary)
+
+[Tableau Presentation](https://public.tableau.com/shared/K99MQB95R?:display_count=n&:origin=viz_share_link)
 
 
 ![sleepr.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/Sleepr.png)
@@ -71,6 +76,7 @@ Once all files had been successfully imported to the SQL database, I started joi
 
 ![sql_query.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/sql_query.png)
 
+[- BACK TO TOP -](#case-study-smart-device-fitness-data)
 ---
 
 ## Analyzing the Data in R
@@ -137,7 +143,7 @@ upper2 <- Q2[2]+1.5*iqr2
 lower2 <- Q2[1]-1.5*iqr2
 cleaned_sedsleep_minutes <- subset(cleaned_sleep_minutes, cleaned_sleep_minutes$sedentaryminutes > lower2 & cleaned_sleep_minutes$sedentaryminutes < upper2)
 ```
-
+[- BACK TO TOP -](#case-study-smart-device-fitness-data)
 ---
 
 ## Analyzing Cleaned Data
@@ -196,11 +202,12 @@ The two bar charts, when compared, appear to reinforce the narrative that more s
 
 The heatmap shown above shows the average activity intensities among users, per hour of each week day (with darker colors representing hightened intensity levels).  There appear to be higher than average levels of activity on Wednesdays (after 5pm) and on Saturday afternoons.  We also see average activity levels staying much lower for longer periods on Saturday and Sunday mornings, suggesting that the users are sleeping in (or at least not rushing off to work).  This may also suggest that the hightened number of sleeping minutes we observed on Sundays may be in the morning, not the evening, and may correlate to reduced sedentary time on Saturdays. Though the heatmap shows higher-than-average levels of general activity on Tuesdays, our previous graphs show that Tuesdays account for some of the fewest number of sleeping minutes.  However, according to the heatmap, the users tend to stay up (and active) later on Tuesdays than they do on Saturdays, so the reduced hours of sleep may be deliberate.
 
+[- BACK TO TOP -](#case-study-smart-device-fitness-data)
 ---
 
 ## SUMMARY
 
-[View the interactive Tableau story here](https://public.tableau.com/views/CASESTUDYSmartDeviceFitnessData/CASESTUDYSmartDeviceFitnessData?:language=en-US&publish=yes&:display_count=n&:origin=viz_share_link)
+[View the interactive Tableau story here](https://public.tableau.com/shared/K99MQB95R?:display_count=n&:origin=viz_share_link)
 
 ![dashboard.png](https://github.com/ZeroDarkHardy/CASE-STUDY-Smart-Device-Fitness-Data/blob/main/images/dashboard.png)
 
@@ -223,3 +230,5 @@ The heatmap shown above shows the average activity intensities among users, per 
 
 - As mentioned earlier, our dataset was fairly limited, not only by the number of unique datapoints but also the table features.  We don't have any data regarding how the users are spending their time (while sedentary), their ages, diet, or any medical information that might affect the sleep they enjoy at night.  Integration of data like this to future analysis might help the client create more accurate and personalized wellness recommendations to the users.
 - More than anything else, a larger amount of user data is needed.  With more data, it would be possible to create a machine learning model to predict the amount of sleep a user can expect based on their recorded habits.
+
+[- BACK TO TOP -](#case-study-smart-device-fitness-data)
